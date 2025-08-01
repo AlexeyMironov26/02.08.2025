@@ -85,7 +85,7 @@ func addObject(w http.ResponseWriter, r *http.Request) {
 			http.StatusConflict)
 		return
 	}
-	tmpl := strings.Split(r.URL.String(), "/")
+	tmpl := strings.Split("http://"+r.Host+r.URL.Path, "/")
 	archlink := strings.Join([]string{tmpl[0], tmpl[1], tmpl[2]}, "/") + "/archive/" + strconv.Itoa(id)
 	link := Linkfj{}
 	byts, err := io.ReadAll(r.Body)
@@ -115,6 +115,7 @@ func addObject(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "The resource is unavailable for downloading, but now at this archive left less space",
 			http.StatusNotFound)
 		archs[id].Objs += 1
+		w.Write([]byte("The object added to archive with id:" + strconv.Itoa(id)))
 		if archs[id].Objs == 3 {
 			archs[id].ArchStat = StatusReady
 			archs[id].Link = archlink
@@ -143,6 +144,7 @@ func addObject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	archs[id].Objs += 1
+	w.Write([]byte("The object added to archive with id:" + strconv.Itoa(id)))
 	if archs[id].Objs == 3 {
 		n -= 1
 		archs[id].ArchStat = StatusReady
