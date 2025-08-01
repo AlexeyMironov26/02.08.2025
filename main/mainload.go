@@ -166,7 +166,7 @@ func getArchStatus(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte(fmt.Sprintf("The status of this task with id: %d by creating zip archive is %s",
 		id, archs[id].ArchStat)))
 	if archs[id].ArchStat == StatusReady {
-
+		fmt.Fprintf(w, "The link to download the archive is %s", archs[id].Link)
 	}
 
 }
