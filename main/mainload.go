@@ -20,8 +20,8 @@ type Status string
 
 const (
 	StatusInitialized Status = "initialized"
-	StatusInProgress         = "in progress"
-	StatusReady              = "Ready"
+	StatusInProgress  Status = "in progress"
+	StatusReady       Status = "Ready"
 )
 
 type Archive struct {
@@ -46,6 +46,7 @@ func main() {
 	http.HandleFunc("/arch_stat", getArchStatus)
 	http.HandleFunc("/archive/", downloadArch)
 
+	log.Print("Server StuffLoad is listening on 0.0.0.0:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
 }
@@ -98,11 +99,6 @@ func addObject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	resp, err := http.Get(link.URL)
-	// if _,ok:=err.(*url.Error); ok{
-	//     log.Print(err)
-	// 	http.Error(w, "Your URL from patch request is in a wrong format", http.StatusBadRequest)
-	// 	return
-	// }else
 	if err != nil {
 		log.Print(err)
 		http.Error(w, `Perhaps, your URL from patch request is in a wrong
@@ -110,7 +106,8 @@ func addObject(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer resp.Body.Close()
-	if !(strings.HasSuffix(link.URL, ".jpeg") || strings.HasSuffix(link.URL, ".pdf")) {
+	contnt := resp.Header.Get("Content-Type")
+	if !(contnt == "application/pdf" || contnt == "image/jpeg") {
 		http.Error(w, "Supported for downloading only files of formats \".jpeg\" and \".pdf\"", http.StatusConflict)
 		return
 	}
@@ -213,5 +210,4 @@ func downloadArch(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"archive%d.zip\"", id))
 	w.Header().Set("Content-Length", strconv.Itoa(len(btdata)))
 	w.Write(btdata)
-
 }

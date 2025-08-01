@@ -1,5 +1,8 @@
-My server use http as main protocol for interaction with it and the server is launching on 0.0.0.0 (means that my server after launching accepts and processes http requests on all ip-addresses which this machine possesses) (IP):8080(port) it is for shaping zip archives from files found on internet and providing a link for downoading that archive. the example of url to address to host: http://localhost:8080/
-Launch it as go run mainload.go in one terminal and send http requests on api of server from another(you can utility "curl" for that). To shut down the server push ctrl+c into the terminal where it was ran.
+My server use http as a main protocol for interaction with it and the server is launching on 0.0.0.0 (means that my server after launching accepts and processes http requests on all ip-addresses which this machine possesses) (IP):8080(port) it is for shaping zip archives from files found on internet and providing a link for downoading that archive. the example of url to address to host: http://localhost(can be any other from ips of your pc):8080/
+Launch it as:
+cd stuff_load
+go run main/mainload.go 
+in one terminal and send http requests on api of server from another(you can utility "curl" for that). To shut down the server push ctrl+c into the terminal where it was ran.
 
 Server have the following endpoints:
 
