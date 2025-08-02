@@ -132,13 +132,21 @@ func addObject(w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	urlparts := strings.Split(link.URL, "/")
-	filewrr, err := archs[id].zpwrr.Create(urlparts[len(urlparts)-1])
+	archs[id].Objs += 1
+	filename := ""
+	if contnt == "application/pdf" {
+		filename = "file" + strconv.Itoa(archs[id].Objs) + ".pdf"
+	} else if contnt == "image/jpeg" {
+		filename = "file" + strconv.Itoa(archs[id].Objs) + ".jpeg"
+	}
+
+	filewrr, err := archs[id].zpwrr.Create(filename)
 	if err != nil {
 		log.Print(err)
 		return
 	}
 	dtresp, err2 := io.ReadAll(resp.Body)
+	//log.Print("Wrote body from obj" + string(dtresp))
 	if err2 != nil {
 		log.Print(err2)
 		return
@@ -148,7 +156,7 @@ func addObject(w http.ResponseWriter, r *http.Request) {
 		log.Print(err1)
 		return
 	}
-	archs[id].Objs += 1
+
 	w.Write([]byte("The object added to archive with id:" + strconv.Itoa(id)))
 	if archs[id].Objs == 3 {
 		n -= 1
@@ -168,7 +176,7 @@ func getArchStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
-	w.Write([]byte(fmt.Sprintf("The status of this task with id: %d by creating zip archive is %s",
+	w.Write([]byte(fmt.Sprintf("The status of this task with id: %d by creating zip archive is %s \n",
 		id, archs[id].ArchStat)))
 	if archs[id].ArchStat == StatusReady {
 		fmt.Fprintf(w, "The link to download the archive is %s", archs[id].Link)
