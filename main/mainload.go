@@ -61,8 +61,8 @@ func initArchive(w http.ResponseWriter, r *http.Request) {
 	idcount += 1
 	n += 1
 	archs[idcount] = &Archive{}
-	buf := archs[idcount].Arch
-	archs[idcount].zpwrr = zip.NewWriter(&buf)
+	buf := &archs[idcount].Arch
+	archs[idcount].zpwrr = zip.NewWriter(buf)
 	archs[idcount].ArchStat = StatusInitialized
 	w.Write([]byte("The id of created task by formig a zip archive is: " + strconv.Itoa(idcount)))
 	r.Body.Close()
@@ -138,7 +138,12 @@ func addObject(w http.ResponseWriter, r *http.Request) {
 		log.Print(err)
 		return
 	}
-	_, err1 := filewrr.Write(byts)
+	dtresp, err2 := io.ReadAll(resp.Body)
+	if err2 != nil {
+		log.Print(err2)
+		return
+	}
+	_, err1 := filewrr.Write(dtresp)
 	if err1 != nil {
 		log.Print(err1)
 		return
